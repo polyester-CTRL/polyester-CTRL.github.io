@@ -1,6 +1,10 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "bb7e55d2b262eddc2d35",
+    "revision": "08a7b945c471d1d14f61",
+    "url": "/vue-pwa-tutorial/css/about.ac6d4f56.css"
+  },
+  {
+    "revision": "fd06e7547d33afedfb4c",
     "url": "/vue-pwa-tutorial/css/app.d45698a7.css"
   },
   {
@@ -16,16 +20,16 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/vue-pwa-tutorial/fonts/element-icons.732389de.ttf"
   },
   {
-    "revision": "8a4b8d62355e740409608eeda2f20bbe",
+    "revision": "556dad23013ed79fa7af8da17c02e81d",
     "url": "/vue-pwa-tutorial/index.html"
   },
   {
-    "revision": "ebc83a8394690127cab2",
-    "url": "/vue-pwa-tutorial/js/about.5cb6c65d.js"
+    "revision": "08a7b945c471d1d14f61",
+    "url": "/vue-pwa-tutorial/js/about.678916dd.js"
   },
   {
-    "revision": "bb7e55d2b262eddc2d35",
-    "url": "/vue-pwa-tutorial/js/app.da532722.js"
+    "revision": "fd06e7547d33afedfb4c",
+    "url": "/vue-pwa-tutorial/js/app.7f7c71a1.js"
   },
   {
     "revision": "739adbb350c3fb30ebfc",
