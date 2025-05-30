@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>端末の移動速度表示</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            padding: 20px;
+            background-color: #f4f4f4;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            text-align: center;
+        }
+        #speed-info {
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            min-width: 250px;
+        }
+        #speed-display {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #007bff;
+            margin: 10px 0;
+        }
+        #speed-unit {
+            font-size: 1em;
+            color: #666;
+        }
+        #status {
+            margin-top: 15px;
+            font-size: 0.9em;
+            color: #888;
+        }
+        .error {
+            color: #dc3545;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>現在の移動速度</h1>
+
+    <div id="speed-info">
+        <div id="speed-display">---</div>
+        <div id="speed-unit">km/h</div>
+        <div id="status">位置情報の取得待機中...</div>
+    </div>
+
+    <script>
+        const speedDisplayElement = document.getElementById('speed-display');
+        const statusElement = document.getElementById('status');
+
+        // Geolocation APIが利用可能かチェック
+        if ('geolocation' in navigator) {
+            statusElement.textContent = '位置情報の利用を許可してください...';
+
+            const options = {
+                enableHighAccuracy: true, // 高精度な位置情報を要求 (速度取得に重要)
+                maximumAge: 0,         // キャッシュを使用しない
+                timeout: 10000         // 10秒でタイムアウト
+            };
+
+            // 位置情報の監視を開始
+            const watchId = navigator.geolocation.watchPosition(
+                showPosition,   // 成功時のコールバック
+                showError,      // エラー時のコールバック
+                options         // オプション
+            );
+
+            // 成功時の処理
+            function showPosition(position) {
+                const speed = position.coords.speed; // 速度(m/s)を取得
+
+                console.log('座標:', position.coords); // デバッグ用に座標情報を出力
+
+                statusElement.textContent = `最終更新: ${new Date(position.timestamp).toLocaleTimeString()}`;
+
+                if (speed !== null && speed >= 0) {
+                    // メートル/秒 を キロメートル/時 に変換
+                    const speedKmh = (speed * 3.6).toFixed(1); // 小数点以下1桁に丸める
+                    speedDisplayElement.textContent = speedKmh;
+                    statusElement.textContent += ` (精度: ${position.coords.accuracy}m)`;
+                } else {
+                    // 速度が取得できない場合
+                    speedDisplayElement.textContent = '---';
+                    statusElement.textContent = '速度を計測できません。GPS信号の良い場所で試してください。';
+                     if (speed === 0) {
+                         speedDisplayElement.textContent = '0.0'; // 停止中の場合も明示的に0を表示
+                         statusElement.textContent = `停止中 (精度: ${position.coords.accuracy}m)`;
+                     }
+                }
+            }
+
+            // エラー時の処理
+            function showError(error) {
+                speedDisplayElement.textContent = 'エラー';
+                statusElement.classList.add('error');
+                switch(error.code) {
+                    case error.PERMISSION_DENIED:
+                        statusElement.textContent = "エラー: 位置情報の利用が許可されていません。";
+                        // 監視を停止する (許可がない場合は何度も聞かないように)
+                        navigator.geolocation.clearWatch(watchId);
+                        break;
+                    case error.POSITION_UNAVAILABLE:
+                        statusElement.textContent = "エラー: 現在位置を特定できませんでした。";
+                        break;
+                    case error.TIMEOUT:
+                        statusElement.textContent = "エラー: 位置情報の取得がタイムアウトしました。";
+                        break;
+                    case error.UNKNOWN_ERROR:
+                        statusElement.textContent = "エラー: 不明なエラーが発生しました。";
+                        break;
+                }
+                console.error("Geolocation Error:", error);
+            }
+
+        } else {
+            // Geolocation APIが利用できない場合
+            speedDisplayElement.textContent = '---';
+            statusElement.textContent = "お使いのブラウザは位置情報取得に対応していません。";
+            statusElement.classList.add('error');
+        }
+    </script>
+
+</body>
+</html>
